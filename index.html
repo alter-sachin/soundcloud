@@ -1,1 +1,51 @@
-WOW
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Download soundcloud songs</title>
+</head>
+<script>
+	function myFunction () {
+		var xhr = new XMLHttpRequest();
+		var client_id = "376f225bf427445fc4bfb6b99b72e0bf";
+		var q = document.getElementById("songsearch").value;
+		var tracks_list_url = "http://api.soundcloud.com/tracks?"+"q="+encodeURIComponent(q)+"&client_id="+client_id;
+		xhr.open("get",tracks_list_url,false);
+		xhr.send(null);
+		var tracksList = JSON.parse(xhr.responseText);
+		var  track_download_url= "http://api.soundcloud.com/i1/tracks/167132129/streams?client_id=[CLIENT_ID]";
+		var showstring = "";
+		var downloadLinkDiv = document.getElementById("downloadLinkDiv");
+		for(var i=0;i<tracksList.length;i++){
+			track_download_url = "http://api.soundcloud.com/i1/tracks/"+tracksList[i].id+"/streams?client_id="+client_id;
+			var xhr1 = new XMLHttpRequest();
+			xhr1.open("get",track_download_url,false);
+			xhr1.send(null);
+			//showstring += track_download_url;
+			//showstring += xhr1.responseText;
+			var trackLink = JSON.parse(xhr1.responseText);
+			var downloadLink = trackLink.http_mp3_128_url;
+			var downloadDiv = document.createElement("div");
+			var downloadHref = document.createElement("a");
+			downloadHref.setAttribute("href",downloadLink);
+			downloadHref.setAttribute("download",tracksList[i].title);
+			downloadHref.appendChild(document.createTextNode(tracksList[i].title));
+			downloadDiv.appendChild(downloadHref);
+			downloadLinkDiv.appendChild(downloadDiv);
+			//showstring += downloadLink;
+			//showstring += track_download_url;
+		}
+		//alert(showstring);
+		return false;
+	}
+</script>
+<body>
+	<form onsubmit="return myFunction()">
+		<input id="songsearch" type="text" required>
+		<input type="submit" value="Search">
+	</form>
+	<div id="downloadLinkDiv"></div>
+</body>
+</html>
